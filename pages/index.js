@@ -136,7 +136,7 @@ export default function Home() {
           ref = {textAreaRef}
           autoFocus = {false}
           rows = {1}
-          maxLength = {10000}
+          maxLength = {1000000000}
           type="text" 
           id="userInput" 
           name="userInput" 
