@@ -65,16 +65,29 @@ export default function Home() {
 
     // Reset user input
     setUserInput("");
-    const data = await response.json();
+    const data = response.body;
 
-    if (data.result.error === "Unauthorized") {
-      handleError();
+    if (!data) {
       return;
     }
 
-    setMessages((prevMessages) => [...prevMessages, { "message": data.result, "type": "apiMessage" }]);
+    const decoder = new TextDecoder();
+    let done = false;
+
+    const reader = data.getReader();
+    let re = ""; 
+
+    //setMessages((prevMessages) => [...prevMessages, { "message": re, "type": "apiMessage" }]);
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      re += chunkValue;
+    }
+
+    setMessages((prevMessages) => [...prevMessages, { "message": re, "type": "apiMessage" }]);
+
     setLoading(false);
-    
   };
 
   // Prevent blank submissions and allow for multiline input
