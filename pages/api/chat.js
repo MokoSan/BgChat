@@ -61,36 +61,21 @@ async function OpenAIStream(payload) {
 
 export default async function (req, res) {
 
-  const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY, });
-  const openai = new OpenAIApi(configuration);
-
+  const d = await req.json();
+  const data = d["userInput"]; 
   const prompt = `You a very helpful curator of the Bhagwat Gita and answer questions with considerable depth and clarity. 
-  The answers should all be complete.
-  Answer the question in the <tag></tag>: <tag>${req.body.question}</tag>
+  The answers should all be complete. All unrelated questions to the Bhagwat Gita must be ignored. The max number of tokens should be 200.
+  Answer the question in the <tag></tag>: <tag>${data}</tag>
   `
-
-  /*
-  const response = await openai.createCompletion({
-    //model: "gpt-3.5-turbo-0301",
-    model: "text-davinci-003",
-    prompt: prompt, //req.body.question, 
-    temperature: 0,
-    max_tokens: 400,
-    top_p: 1.0,
-    frequency_penalty: 0.5,
-    presence_penalty: 0.0,
-    stream: true,
-    });
-    */
 
   const payload = {
     model: "text-davinci-003",
-    prompt,
+    prompt: prompt,
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
-    max_tokens: 200,
+    max_tokens: 400,
     stream: true,
     n: 1,
   };

@@ -55,7 +55,7 @@ export default function Home() {
       headers: {
           "Content-Type": "application/json",
       },
-      body: JSON.stringify({ question: userInput, history: history }),
+        body: JSON.stringify({ userInput, }),
     });
 
     if (!response.ok) {
@@ -75,18 +75,31 @@ export default function Home() {
     let done = false;
 
     const reader = data.getReader();
-    let re = ""; 
+    let initial = `Answering: ${userInput}   - `;
+    let re = ``;
 
-    //setMessages((prevMessages) => [...prevMessages, { "message": re, "type": "apiMessage" }]);
+    let counter = 0
+    let stateBefore = messages.slice()
+    setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
+
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
       re += chunkValue;
+
+      // Every 5 tokens, pop out the running token and add the new one.
+      if (counter % 5 === 0) {
+        let data = messages;
+        let runner = initial + re;
+        setMessages((prevMessages) => [...data, { "message": runner, "type": "apiMessage" }]);
+      }
+
+      ++counter;
     }
 
+    setMessages((prevMessages) => [...stateBefore, { "message": userInput, "type": "userMessage" }]);
     setMessages((prevMessages) => [...prevMessages, { "message": re, "type": "apiMessage" }]);
-
     setLoading(false);
   };
 
