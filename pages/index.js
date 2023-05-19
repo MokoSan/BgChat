@@ -89,7 +89,7 @@ export default function Home() {
       re += chunkValue;
 
       // Every 5 tokens, pop out the running token and add the new one.
-      if (counter % 5 === 0) {
+      if (counter % 2 === 0) {
         let data = messages;
         let runner = initial + re;
         setMessages((prevMessages) => [...data, { "message": runner, "type": "apiMessage" }]);
